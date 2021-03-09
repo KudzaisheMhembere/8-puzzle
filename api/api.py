@@ -5,49 +5,65 @@ import random
 import core_game
 
 
-app = Flask(__name__)
-
 @app.route('/time')
+
 def get_current_time():
+
     return {'time':time.time()}
 
+@app.route('/startState')
+
+def startState():
+
+    return jsonify(random.sample(range(9), 9))
+
 @app.route('/solution')
+
 def get_solutions():
+
+    start_state = request.args['initial_state']
+
+    start_state = start_state.split(',')
+
+    start_state = [int(item) for item in start_state]
+
+    print('Received state: ', start_state, '\n\n')
+
+    start_state = np.array(start_state).reshape((3, 3))
+
+    run_call = getattr(logic,'bfs')
+
+    print(run_call)
+
+    if run_call and 'manhattan':
+
+        can_solve, steps, depth, run_time, visited = run_call(start_state,logic.goal_state,)
+
+    elif run_call:
+
+        can_solve, steps, depth, run_time, visited = run_call(start_state, logic.goal_state)
+
+    response = {
+
+        "steps": steps,
+
+        "nodes_visited": visited,
+
+        "run_time": run_time,
+
+        "solvable": can_solve,
+
+        "depth": depth
+
+    }
+
     """
-    Generate solution using breatfirst search
-    """
-    return jsonify(random.sample(range(9), 9))
-import time
-from flask import Flask, request
-from flask.json import jsonify
-import random
-from api import puzzle
 
-app = Flask(__name__)
-
-
-@app.route('/time')
-def get_current_time():
-    return {'time': time.time()}
-
-
-@app.route('/initial')
-def get_initial_state():
-    """
     Generate solution using breath first search
-    """
-    print(jsonify(random.sample(range(9), 9)))
-    return jsonify(random.sample(range(9), 9))
 
+    """
 
-@app.route('/solution', methods=['POST'])
-def get_solution():
-    """
-    Generate solution using breath first search
-    """
-    puzzle_board = request.json
-    print(puzzle_board)
-    puzzle_solution = puzzle.get_solution(puzzle_board)
-    print(puzzle_solution)
-    return jsonify(puzzle_solution)
+    print(response)
+
+    return jsonify(response)
 
