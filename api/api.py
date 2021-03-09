@@ -2,6 +2,8 @@ import time
 from flask import Flask
 from flask.json import jsonify
 import random
+import core_game
+
 
 app = Flask(__name__)
 
