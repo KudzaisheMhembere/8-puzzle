@@ -45,6 +45,23 @@ class Board extends React.Component {
         }
 
     }
+        getSolution() {
+
+        fetch('/solution?initial_state=' + (this.state.squares).toString()).then(res => res.json()).then(data => {
+
+            this.setState({
+
+                solution: data
+
+            });
+
+            console.log(data)
+
+            alert('Done')
+
+        });
+
+    }
 
     handleNew() {
         fetch('/solution').then(res => res.json()).then(data => {
@@ -68,7 +85,7 @@ class Board extends React.Component {
        
         return (
             <div>
-                <button className='tool' onClick={() => this.handleNew()}>New</button>
+                <button className='tool' onClick={() => this.handleNew()}>New Game</button>
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
